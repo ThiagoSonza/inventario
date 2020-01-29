@@ -74,12 +74,12 @@ def saveMemories(mem, pc):
 def saveSoftwares(sw, pc):
     cursor = connection.cursor()
     cursor.execute("SELECT id FROM inventario.softwares WHERE productname = '" + sw[0] + "' AND device_id = " + str(pc) + ";")
-    id_sw = cursor.fetchone()[0]
-
+    id_sw = cursor.fetchone()
+    
     if id_sw is None:
         cursor.execute('INSERT INTO inventario.softwares (productname, version, publisher, installdata, device_id, created) values (%s, %s, %s, %s, %s, %s);', (sw[0], sw[1], sw[2], sw[3], pc, datetime.datetime.now()) )
     else:
-        cursor.execute("UPDATE inventario.softwares SET version = %s, publisher = %s, installdata = %s, updated = %s WHERE id = %s;", ( sw[1], sw[2], sw[3], datetime.datetime.now(), id_sw ))
+        cursor.execute("UPDATE inventario.softwares SET version = %s, publisher = %s, installdata = %s, updated = %s WHERE id = %s;", ( sw[1], sw[2], sw[3], datetime.datetime.now(), id_sw[0] ))
     
     cursor.close()
 
@@ -117,7 +117,7 @@ def saveData(idDevice, device, ipaddr, memory, hds, softwares = None, placaVideo
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    else:
+    else:        
         try:
             cursor = connection.cursor()
             cursor.execute("UPDATE inventario.devices SET manufacturer = %s, model = %s, serialnumber = %s, macaddress = %s, system = %s, updated = %s, lastlogin = %s WHERE name = %s RETURNING id;", ( device[0], device[1], device[2], device[4], device[6], datetime.datetime.now(), device[7], device[3] ))
@@ -127,9 +127,9 @@ def saveData(idDevice, device, ipaddr, memory, hds, softwares = None, placaVideo
 
             for a in ipaddr:
                 saveIpAddr(a, pc)
-            
+
             for b in hds:
-                saveHardDisks(b, pc)
+                saveHardDisks(b, pc)  
 
             if "win" in sys.platform.lower():
                 for c in placaVideo:

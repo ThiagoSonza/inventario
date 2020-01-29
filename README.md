@@ -85,4 +85,4 @@ pip install py-cpuinfo      --import cpuinfo
 pip install psutil          --import psutil
 pip install uuid            --import uuid
 pip install psycopg2        --driver conexão com DB
-
+pip install psycopg2-binary --driver conexão com DB
